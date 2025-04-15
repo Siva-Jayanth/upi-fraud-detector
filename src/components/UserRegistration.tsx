@@ -20,11 +20,12 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple validation
-    if (!phoneNumber || phoneNumber.length < 10) {
+    // Validate Indian phone number (10 digits, optionally starting with +91)
+    const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
+    if (!phoneRegex.test(phoneNumber.replace(/\s/g, ''))) {
       toast({
         title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number",
+        description: "Please enter a valid Indian phone number",
         variant: "destructive",
       });
       return;
@@ -45,21 +46,21 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
 
   if (isRegistered) {
     return (
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="shadow-md border-gray-200">
+        <CardHeader className="pb-3 bg-gray-50 rounded-t-lg">
           <CardTitle className="text-xl flex items-center gap-2">
             <Shield className="h-5 w-5 text-fraud-low" />
             Protected Account
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <p className="text-sm text-muted-foreground">
             Your account with phone number ending in {phoneNumber.slice(-4)} is protected.
             You will receive fraud alerts and spam protection.
           </p>
         </CardContent>
-        <CardFooter>
-          <Button variant="outline" onClick={() => onRegister('')} className="w-full">
+        <CardFooter className="border-t border-gray-100 pt-4">
+          <Button variant="outline" onClick={() => onRegister('')} className="w-full hover:bg-gray-100">
             Change Phone Number
           </Button>
         </CardFooter>
@@ -68,29 +69,33 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="shadow-md border-gray-200">
+      <CardHeader className="bg-gray-50 rounded-t-lg">
         <CardTitle className="text-xl">Register for Protection</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">Indian Phone Number</Label>
               <Input
                 id="phone"
-                placeholder="Enter your phone number"
+                placeholder="Enter your phone number (e.g., +91 XXXXXXXXXX)"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 type="tel"
-                pattern="[0-9]{10}"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
                 required
               />
               <p className="text-xs text-muted-foreground">
                 We'll use this to send you fraud alerts and block spam messages
               </p>
             </div>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className="bg-gray-800 hover:bg-gray-700 text-white"
+            >
               {isSubmitting ? "Registering..." : "Register for Protection"}
             </Button>
           </div>
