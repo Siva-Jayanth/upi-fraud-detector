@@ -59,16 +59,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
     // Simulate registration
     setTimeout(() => {
       onSignUp(name, email, password, phoneNumber);
-      toast({
-        title: "Sign Up Successful",
-        description: "Welcome to UPI Fraud Shield",
-      });
       setIsSubmitting(false);
-    }, 1000);
+    }, 800);
   };
 
   return (
-    <Card className="shadow-md border-gray-200 w-full max-w-md mx-auto">
+    <Card className="shadow-md border-gray-200 w-full max-w-md mx-auto transition-all duration-300 ease-in-out">
       <CardHeader className="bg-gray-50 rounded-t-lg">
         <CardTitle className="text-xl flex items-center justify-center gap-2">
           <UserPlus className="h-5 w-5" />
@@ -85,7 +81,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
                 placeholder="Enter your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
             </div>
@@ -97,7 +93,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
             </div>
@@ -109,9 +105,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 type="tel"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
+              <p className="text-xs text-gray-500">
+                Must be a valid Indian phone number (e.g., +91 9876543210)
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="signupPassword">Password</Label>
@@ -121,7 +120,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
             </div>
@@ -133,14 +132,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 type="password"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
             </div>
             <Button 
               type="submit" 
               disabled={isSubmitting} 
-              className="bg-gray-800 hover:bg-gray-700 text-white mt-2"
+              className="bg-gray-800 hover:bg-gray-700 text-white mt-2 transition-colors duration-300"
             >
               {isSubmitting ? "Creating Account..." : "Create Account"}
             </Button>
@@ -153,7 +152,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp, onSwitchToSignIn }) =
           <Button 
             variant="link" 
             onClick={onSwitchToSignIn} 
-            className="p-0 h-auto text-gray-600 hover:text-gray-900"
+            className="p-0 h-auto text-gray-600 hover:text-gray-900 transition-colors duration-200"
           >
             Sign In
           </Button>

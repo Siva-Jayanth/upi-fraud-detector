@@ -36,20 +36,16 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
     // Simulate API call
     setTimeout(() => {
       onRegister(phoneNumber);
-      toast({
-        title: "Registration Successful",
-        description: "You will now receive fraud alerts and spam protection",
-      });
       setIsSubmitting(false);
-    }, 1000);
+    }, 800);
   };
 
   if (isRegistered) {
     return (
-      <Card className="shadow-md border-gray-200">
+      <Card className="shadow-sm border-gray-200 transition-all duration-300 ease-in-out">
         <CardHeader className="pb-3 bg-gray-50 rounded-t-lg">
           <CardTitle className="text-xl flex items-center gap-2">
-            <Shield className="h-5 w-5 text-fraud-low" />
+            <Shield className="h-5 w-5 text-green-600" />
             Protected Account
           </CardTitle>
         </CardHeader>
@@ -60,7 +56,11 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
           </p>
         </CardContent>
         <CardFooter className="border-t border-gray-100 pt-4">
-          <Button variant="outline" onClick={() => onRegister('')} className="w-full hover:bg-gray-100">
+          <Button 
+            variant="outline" 
+            onClick={() => onRegister('')} 
+            className="w-full hover:bg-gray-100 transition-colors duration-300"
+          >
             Change Phone Number
           </Button>
         </CardFooter>
@@ -69,7 +69,7 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
   }
 
   return (
-    <Card className="shadow-md border-gray-200">
+    <Card className="shadow-sm border-gray-200 transition-all duration-300 ease-in-out">
       <CardHeader className="bg-gray-50 rounded-t-lg">
         <CardTitle className="text-xl">Register for Protection</CardTitle>
       </CardHeader>
@@ -84,7 +84,7 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 type="tel"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
               <p className="text-xs text-muted-foreground">
@@ -94,7 +94,7 @@ const UserRegistration: React.FC<UserRegistrationProps> = ({ onRegister, isRegis
             <Button 
               type="submit" 
               disabled={isSubmitting} 
-              className="bg-gray-800 hover:bg-gray-700 text-white"
+              className="bg-gray-800 hover:bg-gray-700 text-white transition-colors duration-300"
             >
               {isSubmitting ? "Registering..." : "Register for Protection"}
             </Button>

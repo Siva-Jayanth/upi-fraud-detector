@@ -35,16 +35,12 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn, onSwitchToSignUp }) =
     // Simulate authentication
     setTimeout(() => {
       onSignIn(email, password);
-      toast({
-        title: "Sign In Successful",
-        description: "Welcome back to UPI Fraud Shield",
-      });
       setIsSubmitting(false);
-    }, 1000);
+    }, 800);
   };
 
   return (
-    <Card className="shadow-md border-gray-200 w-full max-w-md mx-auto">
+    <Card className="shadow-md border-gray-200 w-full max-w-md mx-auto transition-all duration-300 ease-in-out">
       <CardHeader className="bg-gray-50 rounded-t-lg">
         <CardTitle className="text-xl flex items-center justify-center gap-2">
           <LogIn className="h-5 w-5" />
@@ -62,7 +58,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn, onSwitchToSignUp }) =
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
             </div>
@@ -74,14 +70,14 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn, onSwitchToSignUp }) =
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                className="border-gray-300 focus:border-gray-400 focus:ring-gray-400 transition-all duration-200"
                 required
               />
             </div>
             <Button 
               type="submit" 
               disabled={isSubmitting} 
-              className="bg-gray-800 hover:bg-gray-700 text-white"
+              className="bg-gray-800 hover:bg-gray-700 text-white transition-colors duration-300"
             >
               {isSubmitting ? "Signing In..." : "Sign In"}
             </Button>
@@ -94,7 +90,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn, onSwitchToSignUp }) =
           <Button 
             variant="link" 
             onClick={onSwitchToSignUp} 
-            className="p-0 h-auto text-gray-600 hover:text-gray-900"
+            className="p-0 h-auto text-gray-600 hover:text-gray-900 transition-colors duration-200"
           >
             Sign Up
           </Button>

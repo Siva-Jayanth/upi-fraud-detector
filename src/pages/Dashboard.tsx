@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import MenuBar from '@/components/layout/MenuBar';
+import { Menu, MoreVertical, Shield, Bell, User, LogIn, LogOut } from 'lucide-react';
 import UserRegistration from '@/components/UserRegistration';
 import NotificationCenter, { Notification } from '@/components/NotificationCenter';
 import TransactionList from '@/components/TransactionList';
@@ -13,9 +13,19 @@ import { generateTransactionBatch } from '@/utils/data-generator';
 import { AnomalyDetector } from '@/utils/anomaly-detection';
 import { SpamDetector } from '@/utils/spam-detection';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
 
 const Dashboard = () => {
+  const { toast } = useToast();
+  
   // Authentication state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
@@ -40,6 +50,10 @@ const Dashboard = () => {
       setPhoneNumber(phone);
       setIsRegistered(true);
       generateInitialNotifications();
+      toast({
+        title: "Protection Activated",
+        description: "Your phone is now protected against fraud and spam",
+      });
     } else {
       setPhoneNumber('');
       setIsRegistered(false);
@@ -53,6 +67,10 @@ const Dashboard = () => {
     setShowSignIn(false);
     setShowSignUp(false);
     setUsername(email.split('@')[0]);
+    toast({
+      title: "Sign In Successful",
+      description: "Welcome back to UPI Fraud Detector",
+    });
   };
 
   const handleSignUp = (name: string, email: string, password: string, phone: string) => {
@@ -67,7 +85,10 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    // We don't reset phone registration status on logout
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully",
+    });
   };
 
   // Generate some initial notifications
@@ -76,7 +97,7 @@ const Dashboard = () => {
       {
         id: uuidv4(),
         type: 'info',
-        title: 'Welcome to UPI Fraud Shield',
+        title: 'Welcome to UPI Fraud Detector',
         message: 'Your account is now protected against fraud and spam',
         timestamp: new Date(),
         isRead: false
@@ -121,24 +142,113 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <MenuBar 
-        isLoggedIn={isLoggedIn} 
-        onSignIn={() => {
-          setShowSignIn(true);
-          setShowSignUp(false);
-        }}
-        onSignUp={() => {
-          setShowSignUp(true);
-          setShowSignIn(false);
-        }}
-        onLogout={handleLogout}
-        onViewNotifications={() => setShowNotifications(!showNotifications)}
-        username={username}
-      />
+      {/* Minimal Header with 3-dot menu */}
+      <header className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-2">
+              <Shield className="h-6 w-6 text-gray-800" />
+              <h1 className="text-xl font-semibold text-gray-800">UPI Fraud Detector</h1>
+            </div>
+            
+            <nav className="hidden md:flex space-x-8">
+              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
+                Dashboard
+              </button>
+              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
+                Protection
+              </button>
+              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
+                Transactions
+              </button>
+              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
+                Help
+              </button>
+            </nav>
+            
+            <div className="flex items-center space-x-4">
+              {isLoggedIn && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative text-gray-600 hover:text-gray-900"
+                >
+                  <Bell className="h-5 w-5" />
+                  {notifications.some(n => !n.isRead) && (
+                    <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                  )}
+                </Button>
+              )}
+              
+              {/* 3-dot menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900">
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-white">
+                  {isLoggedIn ? (
+                    <>
+                      <div className="px-2 py-1.5 text-sm font-medium text-gray-500">
+                        Signed in as <span className="font-semibold text-gray-900">{username}</span>
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="cursor-pointer flex items-center"
+                        onClick={() => setShowNotifications(!showNotifications)}
+                      >
+                        <Bell className="mr-2 h-4 w-4" />
+                        <span>Notifications</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer flex items-center">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="cursor-pointer flex items-center text-red-600"
+                        onClick={handleLogout}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Sign out</span>
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem 
+                        className="cursor-pointer flex items-center"
+                        onClick={() => {
+                          setShowSignIn(true);
+                          setShowSignUp(false);
+                        }}
+                      >
+                        <LogIn className="mr-2 h-4 w-4" />
+                        <span>Sign in</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="cursor-pointer flex items-center"
+                        onClick={() => {
+                          setShowSignUp(true);
+                          setShowSignIn(false);
+                        }}
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Sign up</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
+      </header>
       
       {/* Auth forms */}
       {!isLoggedIn && showSignIn && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="relative w-full max-w-md">
             <button 
               onClick={() => setShowSignIn(false)} 
@@ -158,7 +268,7 @@ const Dashboard = () => {
       )}
       
       {!isLoggedIn && showSignUp && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="relative w-full max-w-md">
             <button 
               onClick={() => setShowSignUp(false)} 
@@ -217,14 +327,14 @@ const Dashboard = () => {
                     />
                   )
                 ) : (
-                  <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-md">
-                    <h2 className="text-xl font-semibold mb-4">Welcome to UPI Fraud Shield</h2>
+                  <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h2 className="text-xl font-semibold mb-4">Welcome to UPI Fraud Detector</h2>
                     <p className="text-gray-600 mb-6">
                       Sign in or create an account to protect your UPI transactions and block spam messages.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button 
-                        className="bg-gray-800 hover:bg-gray-700 text-white w-full"
+                        className="bg-gray-800 hover:bg-gray-700 text-white w-full transition-colors duration-300"
                         onClick={() => {
                           setShowSignUp(true);
                           setShowSignIn(false);
@@ -234,7 +344,7 @@ const Dashboard = () => {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border-gray-300 hover:bg-gray-100"
+                        className="w-full border-gray-300 hover:bg-gray-100 transition-colors duration-300"
                         onClick={() => {
                           setShowSignIn(true);
                           setShowSignUp(false);
