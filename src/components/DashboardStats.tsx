@@ -3,13 +3,21 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Transaction } from '@/utils/data-generator';
 import { AnomalyDetector } from '@/utils/anomaly-detection';
+import { Shield, MessageSquareX, ShieldCheck, AlertCircle } from 'lucide-react';
 
 interface DashboardStatsProps {
   transactions: Transaction[];
   anomalyDetector: AnomalyDetector;
+  blockedSpam?: number;
+  isRegistered?: boolean;
 }
 
-const DashboardStats: React.FC<DashboardStatsProps> = ({ transactions, anomalyDetector }) => {
+const DashboardStats: React.FC<DashboardStatsProps> = ({ 
+  transactions, 
+  anomalyDetector, 
+  blockedSpam = 0,
+  isRegistered = false
+}) => {
   const getTransactionStats = () => {
     const stats = {
       total: transactions.length,
@@ -44,14 +52,29 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ transactions, anomalyDe
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Total Transactions
+          <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Protection Status
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.total}</div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Last 24 hours
+          <div className="flex items-center gap-2">
+            {isRegistered ? (
+              <>
+                <ShieldCheck className="h-5 w-5 text-fraud-low" />
+                <div className="text-xl font-bold text-fraud-low">Active</div>
+              </>
+            ) : (
+              <>
+                <AlertCircle className="h-5 w-5 text-fraud-high" />
+                <div className="text-xl font-bold text-fraud-high">Inactive</div>
+              </>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            {isRegistered 
+              ? "Your account is protected against fraud and spam" 
+              : "Register to enable fraud alerts and spam protection"}
           </p>
         </CardContent>
       </Card>
@@ -72,7 +95,8 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ transactions, anomalyDe
       
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <AlertCircle className="h-4 w-4" />
             Fraud Detected
           </CardTitle>
         </CardHeader>
@@ -90,14 +114,17 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ transactions, anomalyDe
       
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Amount Saved
+          <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <MessageSquareX className="h-4 w-4" />
+            Spam Blocked
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-fraud-low">₹{stats.blockedAmount.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-fraud-low">{blockedSpam}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            Protected from fraudulent transactions
+            {isRegistered 
+              ? "Spam messages blocked" 
+              : "Register to enable spam protection"}
           </p>
         </CardContent>
       </Card>
