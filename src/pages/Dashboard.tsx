@@ -9,9 +9,10 @@ import FraudPreventionTips from '@/components/FraudPreventionTips';
 import AnomalyChart from '@/components/AnomalyChart';
 import SignInForm from '@/components/auth/SignInForm';
 import SignUpForm from '@/components/auth/SignUpForm';
-import { generateTransactions } from '@/utils/data-generator';
+import { generateTransactionBatch } from '@/utils/data-generator';
 import { AnomalyDetector } from '@/utils/anomaly-detection';
 import { SpamDetector } from '@/utils/spam-detection';
+import { Button } from '@/components/ui/button';
 import { v4 as uuidv4 } from 'uuid';
 
 const Dashboard = () => {
@@ -31,7 +32,7 @@ const Dashboard = () => {
   // Initialize ML models and data
   const anomalyDetector = new AnomalyDetector();
   const spamDetector = new SpamDetector();
-  const transactions = generateTransactions(20);
+  const transactions = generateTransactionBatch(20);
 
   // Handle user registration
   const handleRegister = (phone: string) => {
@@ -198,7 +199,10 @@ const Dashboard = () => {
             />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AnomalyChart transactions={transactions} />
+              <AnomalyChart 
+                transactions={transactions}
+                anomalyDetector={anomalyDetector}
+              />
               <div>
                 {isLoggedIn ? (
                   isRegistered ? (
