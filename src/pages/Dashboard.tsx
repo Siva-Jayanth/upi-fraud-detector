@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, MoreVertical, Shield, Bell, User, LogIn, LogOut } from 'lucide-react';
+import { Menu, Shield, Bell, User, LogIn, LogOut } from 'lucide-react';
 import UserRegistration from '@/components/UserRegistration';
 import NotificationCenter, { Notification } from '@/components/NotificationCenter';
 import TransactionList from '@/components/TransactionList';
@@ -12,16 +12,10 @@ import SignUpForm from '@/components/auth/SignUpForm';
 import { generateTransactionBatch } from '@/utils/data-generator';
 import { AnomalyDetector } from '@/utils/anomaly-detection';
 import { SpamDetector } from '@/utils/spam-detection';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
+import MenuBar from '@/components/layout/MenuBar';
+import MainNavigation from '@/components/layout/MainNavigation';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -142,109 +136,15 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Minimal Header with 3-dot menu */}
-      <header className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <Shield className="h-6 w-6 text-gray-800" />
-              <h1 className="text-xl font-semibold text-gray-800">UPI Fraud Detector</h1>
-            </div>
-            
-            <nav className="hidden md:flex space-x-8">
-              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
-                Dashboard
-              </button>
-              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
-                Protection
-              </button>
-              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
-                Transactions
-              </button>
-              <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">
-                Help
-              </button>
-            </nav>
-            
-            <div className="flex items-center space-x-4">
-              {isLoggedIn && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative text-gray-600 hover:text-gray-900"
-                >
-                  <Bell className="h-5 w-5" />
-                  {notifications.some(n => !n.isRead) && (
-                    <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-                  )}
-                </Button>
-              )}
-              
-              {/* 3-dot menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900">
-                    <MoreVertical className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white">
-                  {isLoggedIn ? (
-                    <>
-                      <div className="px-2 py-1.5 text-sm font-medium text-gray-500">
-                        Signed in as <span className="font-semibold text-gray-900">{username}</span>
-                      </div>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        className="cursor-pointer flex items-center"
-                        onClick={() => setShowNotifications(!showNotifications)}
-                      >
-                        <Bell className="mr-2 h-4 w-4" />
-                        <span>Notifications</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer flex items-center">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        className="cursor-pointer flex items-center text-red-600"
-                        onClick={handleLogout}
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Sign out</span>
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <>
-                      <DropdownMenuItem 
-                        className="cursor-pointer flex items-center"
-                        onClick={() => {
-                          setShowSignIn(true);
-                          setShowSignUp(false);
-                        }}
-                      >
-                        <LogIn className="mr-2 h-4 w-4" />
-                        <span>Sign in</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="cursor-pointer flex items-center"
-                        onClick={() => {
-                          setShowSignUp(true);
-                          setShowSignIn(false);
-                        }}
-                      >
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Sign up</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Menu Bar with the circular 3-dot menu */}
+      <MenuBar 
+        isLoggedIn={isLoggedIn}
+        onSignIn={() => setShowSignIn(true)}
+        onSignUp={() => setShowSignUp(true)}
+        onLogout={handleLogout}
+        onViewNotifications={() => setShowNotifications(!showNotifications)}
+        username={username}
+      />
       
       {/* Auth forms */}
       {!isLoggedIn && showSignIn && (
@@ -298,6 +198,11 @@ const Dashboard = () => {
       )}
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Main Navigation for smaller screens */}
+        <div className="md:hidden mb-6">
+          <MainNavigation isLoggedIn={isLoggedIn} />
+        </div>
+        
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
@@ -333,25 +238,24 @@ const Dashboard = () => {
                       Sign in or create an account to protect your UPI transactions and block spam messages.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <Button 
-                        className="bg-gray-800 hover:bg-gray-700 text-white w-full transition-colors duration-300"
+                      <button 
+                        className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md w-full transition-colors duration-300"
                         onClick={() => {
                           setShowSignUp(true);
                           setShowSignIn(false);
                         }}
                       >
                         Get Started
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-gray-300 hover:bg-gray-100 transition-colors duration-300"
+                      </button>
+                      <button 
+                        className="border border-gray-300 hover:bg-gray-100 px-4 py-2 rounded-md w-full transition-colors duration-300"
                         onClick={() => {
                           setShowSignIn(true);
                           setShowSignUp(false);
                         }}
                       >
                         Sign In
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 )}
